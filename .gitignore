@@ -1,0 +1,4 @@
+*.dcu
+*.exe
+*.dproj.local
+__history
