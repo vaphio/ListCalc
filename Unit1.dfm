@@ -22,7 +22,6 @@ object Form1: TForm1
     Align = alClient
     Style = tsFlatButtons
     TabOrder = 0
-    ExplicitWidth = 244
     object tabLST: TTabSheet
       Caption = 'LST'
       DesignSize = (
@@ -96,9 +95,9 @@ object Form1: TForm1
       end
       object lstData: TListBox
         Left = 0
-        Top = 28
+        Top = 62
         Width = 248
-        Height = 151
+        Height = 121
         Align = alTop
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -110,7 +109,6 @@ object Form1: TForm1
         TabOrder = 0
         OnClick = lstDataClick
         OnDrawItem = lstDataDrawItem
-        ExplicitWidth = 236
       end
       object edInp: TEdit
         Left = 0
@@ -128,7 +126,6 @@ object Form1: TForm1
         TabOrder = 1
         Text = 'edInp'
         OnKeyPress = edInpKeyPress
-        ExplicitWidth = 236
       end
       object Panel1: TPanel
         Left = 0
@@ -137,10 +134,9 @@ object Form1: TForm1
         Height = 203
         Align = alBottom
         TabOrder = 2
-        ExplicitWidth = 236
         object BtnCA: TButton
-          Left = 11
-          Top = 15
+          Left = 4
+          Top = 4
           Width = 40
           Height = 25
           Action = clearAll
@@ -168,17 +164,17 @@ object Form1: TForm1
         end
         object Memo1: TMemo
           Left = 1
-          Top = 120
+          Top = 66
           Width = 246
-          Height = 82
+          Height = 136
           Align = alBottom
           Lines.Strings = (
             'Memo1')
           TabOrder = 2
         end
         object btnC: TButton
-          Left = 57
-          Top = 16
+          Left = 50
+          Top = 4
           Width = 40
           Height = 25
           Action = clearInp
@@ -187,8 +183,8 @@ object Form1: TForm1
           TabOrder = 3
         end
         object btnSqrt: TButton
-          Left = 103
-          Top = 16
+          Left = 96
+          Top = 4
           Width = 40
           Height = 25
           Action = sqRoot
@@ -197,8 +193,8 @@ object Form1: TForm1
           TabOrder = 4
         end
         object btnSq: TButton
-          Left = 149
-          Top = 16
+          Left = 142
+          Top = 4
           Width = 40
           Height = 25
           Action = square
@@ -207,36 +203,101 @@ object Form1: TForm1
           TabOrder = 5
         end
         object btnLn: TButton
-          Left = 57
-          Top = 47
+          Left = 50
+          Top = 35
           Width = 40
           Height = 25
           Action = logNat
           TabOrder = 6
         end
         object btnLog: TButton
-          Left = 103
-          Top = 47
+          Left = 96
+          Top = 35
           Width = 40
           Height = 25
           Action = logCom
           TabOrder = 7
         end
         object btnExp: TButton
-          Left = 149
-          Top = 47
+          Left = 142
+          Top = 35
           Width = 40
           Height = 25
           Action = actExp
           TabOrder = 8
         end
         object Button1: TButton
-          Left = 11
-          Top = 46
+          Left = 4
+          Top = 35
           Width = 40
           Height = 25
           Action = actPercent
           TabOrder = 9
+        end
+      end
+      object Panel2: TPanel
+        Left = 0
+        Top = 28
+        Width = 248
+        Height = 34
+        Align = alTop
+        TabOrder = 3
+        object sbtnPerPlus: TSpeedButton
+          Left = 68
+          Top = 2
+          Width = 30
+          Height = 30
+          AllowAllUp = True
+          GroupIndex = 1
+          Caption = '%+'
+        end
+        object sbtnPerMinus: TSpeedButton
+          Left = 100
+          Top = 2
+          Width = 30
+          Height = 30
+          AllowAllUp = True
+          GroupIndex = 1
+          Caption = '%-'
+        end
+        object sbtnMul: TSpeedButton
+          Left = 4
+          Top = 2
+          Width = 30
+          Height = 30
+          AllowAllUp = True
+          GroupIndex = 1
+          Caption = '*'
+        end
+        object sbtnDiv: TSpeedButton
+          Left = 36
+          Top = 2
+          Width = 30
+          Height = 30
+          AllowAllUp = True
+          GroupIndex = 1
+          Caption = '/'
+        end
+        object cbPara: TComboBox
+          Left = 174
+          Top = 3
+          Width = 70
+          Height = 28
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Meiryo UI'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          Text = 'cbPara'
+          Items.Strings = (
+            '1'
+            '5'
+            '8'
+            '10'
+            '20'
+            '30')
         end
       end
     end
@@ -377,42 +438,59 @@ object Form1: TForm1
     Top = 408
     StyleName = 'Platform Default'
     object clearAll: TAction
+      Category = 'fx'
       Caption = 'CA'
       Hint = 'Clear All'
       ShortCut = 32814
       OnExecute = clearAllExecute
     end
     object clearInp: TAction
+      Category = 'fx'
       Caption = 'C'
       Hint = 'Clear Input'
       ShortCut = 16430
       OnExecute = clearInpExecute
     end
     object sqRoot: TAction
+      Category = 'fx'
       Caption = #8730
       Hint = 'Square root'
       OnExecute = sqRootExecute
     end
     object square: TAction
+      Category = 'fx'
       Caption = '^2'
       Hint = 'square'
       OnExecute = squareExecute
     end
     object logNat: TAction
+      Category = 'fx'
       Caption = 'ln'
       OnExecute = logNatExecute
     end
     object logCom: TAction
+      Category = 'fx'
       Caption = 'log'
       OnExecute = logComExecute
     end
     object actExp: TAction
+      Category = 'fx'
       Caption = 'e^'
       OnExecute = actExpExecute
     end
     object actPercent: TAction
+      Category = 'fx'
       Caption = '%'
       OnExecute = actPercentExecute
+    end
+    object actPerPlus: TAction
+      Category = 'paraCalc'
+      Caption = '%+'
+      Checked = True
+    end
+    object actPerMinus: TAction
+      Category = 'paraCalc'
+      Caption = '%-'
     end
   end
 end

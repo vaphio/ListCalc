@@ -1,4 +1,5 @@
 *.dcu
 *.exe
 *.dproj.local
-__history
+__history/
+__recovery/

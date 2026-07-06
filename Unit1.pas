@@ -6,7 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Grids,
   Vcl.ComCtrls, Vcl.PlatformDefaultStyleActnCtrls, System.Actions, Vcl.ActnList,
-  Vcl.ActnMan, Vcl.Clipbrd, System.Math;
+  Vcl.ActnMan, Vcl.Clipbrd, System.Math, Vcl.ToolWin, Vcl.CategoryButtons,
+  Vcl.Buttons;
 
 type
   TForm1 = class(TForm)
@@ -47,6 +48,14 @@ type
     actExp: TAction;
     Button1: TButton;
     actPercent: TAction;
+    cbPara: TComboBox;
+    actPerPlus: TAction;
+    actPerMinus: TAction;
+    Panel2: TPanel;
+    sbtnPerPlus: TSpeedButton;
+    sbtnPerMinus: TSpeedButton;
+    sbtnMul: TSpeedButton;
+    sbtnDiv: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure edInpKeyPress(Sender: TObject; var Key: Char);
     procedure lstDataDrawItem(Control: TWinControl; Index: Integer;
@@ -57,6 +66,10 @@ type
     procedure dspLST();
     function calcSGM(): double;
     function calcAvg(): double;
+    function getInp(): double;
+    function getPara(): double;
+    function calcParPlus(src, para: double):double;
+    function calcParMinus(src, para: double): double;
     procedure cbDigChange(Sender: TObject);
     procedure lstDataClick(Sender: TObject);
     procedure Label1Click(Sender: TObject);
@@ -112,6 +125,21 @@ begin
   result := sum;
 end;
 
+function TForm1.calcParPlus(src: Double; para: Double): Double;
+begin
+  result := src * (1+para);
+end;
+
+function TForm1.calcParMinus(src: Double; para: Double): Double;
+begin
+  result := src * (1-para);
+end;
+
+function TForm1.getInp: Double;
+begin
+  result := StrToFloat(edInp.Text);
+end;
+
 procedure TForm1.cbDigChange(Sender: TObject);
 begin
   dspLST;
@@ -146,20 +174,29 @@ end;
 procedure TForm1.edInpKeyPress(Sender: TObject; var Key: Char);
 var
   knum: Integer;
-  cbuf: double;
+  cbuf, para, res: double;
+  srst: string;
 begin
   knum := Ord(Key);
   Memo1.Lines.Add(IntToStr(knum));
-  case knum of
-    42: cbuf := StrToFloat(edInp.Text);
-    47: cbuf := StrToFloat(edInp.Text);
-
-  end;
+  res := 0.0;
   if knum=13 then begin    //enter
+    cbuf := getInp;
+    para := getPara;
+    if sbtnMul.Down then
+      res := cbuf * para
+    else if sbtnDiv.Down and (para<>0) then
+      res := cbuf / para
+    else if sbtnPerPlus.Down then
+      res := cbuf * (1 + para/100)
+    else if sbtnPerMinus.Down then
+      res := cbuf * (1 - para/100);
+    srst := FloatToStr(res);
+    edInp.Text := srst;
     if mode then
-      lstData.Items.Insert(0,edInp.Text)
+      lstData.Items.Insert(0,srst)
     else
-      lstData.Items[lstData.ItemIndex] := edInp.Text;
+      lstData.Items[lstData.ItemIndex] := srst;
     dspLST;
     edInp.Clear;
     mode := true;
@@ -169,12 +206,16 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   calcPages.TabIndex := 0;
+  // LIST CALC Page
   lstData.Items.Clear;
   edInp.Clear;
+  cbPara.ItemIndex := 0;
   mode := true;
   dspLST;
   ActiveControl := edInp;
+  sbtnMul.Down := True;
   Memo1.Lines.Clear;
+  // Binary Calc page
 end;
 
 function TForm1.FmtNum(num: double; dig: Integer): string;
@@ -223,6 +264,11 @@ begin
   res := buf/100;
   edInp.Text := FloatToStr(res);
   ActiveControl := edInp;
+end;
+
+function TForm1.getPara: Double;
+begin
+  result := StrToFloat(cbPara.Text);
 end;
 
 function TForm1.BinNum(snum: string): string;
