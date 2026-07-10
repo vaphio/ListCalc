@@ -46,7 +46,7 @@ type
     logCom: TAction;
     btnExp: TButton;
     actExp: TAction;
-    Button1: TButton;
+    btnPercent: TButton;
     actPercent: TAction;
     cbPara: TComboBox;
     actPerPlus: TAction;
@@ -56,11 +56,25 @@ type
     sbtnPerMinus: TSpeedButton;
     sbtnMul: TSpeedButton;
     sbtnDiv: TSpeedButton;
+    sbtnPlus: TSpeedButton;
+    btnPi: TButton;
+    actPi: TAction;
+    btnDel: TButton;
+    actDel: TAction;
+    Button1: TButton;
+    actSin: TAction;
+    Button2: TButton;
+    actCos: TAction;
+    Panel3: TPanel;
+    sbtnBIN: TSpeedButton;
+    sbtnHEX: TSpeedButton;
+    SpeedButton2: TSpeedButton;
+    Edit1: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure edInpKeyPress(Sender: TObject; var Key: Char);
     procedure lstDataDrawItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);
-    function FmtNum(num: double; dig: Integer): string;
+    function FmtNum(num: double): string;
     function HexNum(snum: string): string;
     function BinNum(snum: string): string;
     procedure dspLST();
@@ -70,6 +84,7 @@ type
     function getPara(): double;
     function calcParPlus(src, para: double):double;
     function calcParMinus(src, para: double): double;
+    function xfrFloat(snum: string): double;
     procedure cbDigChange(Sender: TObject);
     procedure lstDataClick(Sender: TObject);
     procedure Label1Click(Sender: TObject);
@@ -82,6 +97,13 @@ type
     procedure logNatExecute(Sender: TObject);
     procedure actExpExecute(Sender: TObject);
     procedure actPercentExecute(Sender: TObject);
+    procedure lblSUMClick(Sender: TObject);
+    procedure lblAVGClick(Sender: TObject);
+    procedure cbParaChange(Sender: TObject);
+    procedure actPiExecute(Sender: TObject);
+    procedure actDelExecute(Sender: TObject);
+    procedure actSinExecute(Sender: TObject);
+    procedure actCosExecute(Sender: TObject);
   private
     { Private êÈåæ }
   public
@@ -90,7 +112,7 @@ type
 
 var
   Form1: TForm1;
-  mode: boolean;
+  mode: boolean;    // true: insert mode, false: edit mode
 
 const
   bin: array[0..15] of string = ('0000','0001','0010','0011','0100','0101','0110','0111','1000','1001','1010','1011', '1100','1101','1110','1111');
@@ -137,12 +159,25 @@ end;
 
 function TForm1.getInp: Double;
 begin
-  result := StrToFloat(edInp.Text);
+  result := xfrFloat(edInp.Text);
+end;
+
+function TForm1.xfrFloat(snum: string): Double;
+var
+  sbuf: string;
+begin
+  sbuf := StringReplace(snum, ',', '', [rfReplaceAll]);
+  result := StrToFloat(sbuf);
 end;
 
 procedure TForm1.cbDigChange(Sender: TObject);
 begin
   dspLST;
+  ActiveControl := edInp;
+end;
+
+procedure TForm1.cbParaChange(Sender: TObject);
+begin
   ActiveControl := edInp;
 end;
 
@@ -162,13 +197,11 @@ end;
 procedure TForm1.dspLST;
 var
   sum, avg: Double;
-  dig: Integer;
 begin
   sum := calcSGM;
   avg := calcAvg;
-  dig := StrToInt(cbDig.Text);
-  lblSUM.Caption := FmtNum(sum, dig);
-  lblAVG.Caption := FmtNum(avg, dig);
+  lblSUM.Caption := FmtNum(sum);
+  lblAVG.Caption := FmtNum(avg);
 end;
 
 procedure TForm1.edInpKeyPress(Sender: TObject; var Key: Char);
@@ -178,7 +211,7 @@ var
   srst: string;
 begin
   knum := Ord(Key);
-  Memo1.Lines.Add(IntToStr(knum));
+//  Memo1.Lines.Add(IntToStr(knum));
   res := 0.0;
   if knum=13 then begin    //enter
     cbuf := getInp;
@@ -187,14 +220,18 @@ begin
       res := cbuf * para
     else if sbtnDiv.Down and (para<>0) then
       res := cbuf / para
+    else if sbtnPlus.Down then
+      res := cbuf + para
     else if sbtnPerPlus.Down then
       res := cbuf * (1 + para/100)
     else if sbtnPerMinus.Down then
       res := cbuf * (1 - para/100);
     srst := FloatToStr(res);
     edInp.Text := srst;
-    if mode then
-      lstData.Items.Insert(0,srst)
+    if mode then begin
+      lstData.Items.Insert(0,srst);
+      lstData.ItemIndex := 0;
+    end
     else
       lstData.Items[lstData.ItemIndex] := srst;
     dspLST;
@@ -218,9 +255,12 @@ begin
   // Binary Calc page
 end;
 
-function TForm1.FmtNum(num: double; dig: Integer): string;
+function TForm1.FmtNum(num: double): string;
+var
+  ndig: Integer;
 begin
-  result := Format('%12.*n',[dig, num]);
+  ndig := StrToInt(cbDig.Text);
+  result := Format('%24.*n',[ndig, num]);
 end;
 
 function TForm1.HexNum(snum: string): string;
@@ -246,6 +286,25 @@ begin
   Memo1.Lines.Add('AVG data was copied.:'+s);
 end;
 
+procedure TForm1.actCosExecute(Sender: TObject);
+var
+  buf, res: double;
+begin
+  buf := StrToFloat(edInp.Text);
+  res := Cos(buf*pi/180);
+  edInp.Text := FloatToStr(res);
+  ActiveControl := edInp;
+end;
+
+procedure TForm1.actDelExecute(Sender: TObject);
+begin
+  if lstData.Items.Count > 0 then begin
+    lstData.DeleteSelected;
+    lstData.ItemIndex := 0;
+  end;
+  ActiveControl := edInp;
+end;
+
 procedure TForm1.actExpExecute(Sender: TObject);
 var
   buf, res: double;
@@ -266,9 +325,24 @@ begin
   ActiveControl := edInp;
 end;
 
+procedure TForm1.actPiExecute(Sender: TObject);
+begin
+  edInp.Text := FloatToStr(pi);
+end;
+
+procedure TForm1.actSinExecute(Sender: TObject);
+var
+  buf, res: double;
+begin
+  buf := StrToFloat(edInp.Text);
+  res := Sin(buf*pi/180);
+  edInp.Text := FloatToStr(res);
+  ActiveControl := edInp;
+end;
+
 function TForm1.getPara: Double;
 begin
-  result := StrToFloat(cbPara.Text);
+  result := xfrFloat(cbPara.Text);
 end;
 
 function TForm1.BinNum(snum: string): string;
@@ -286,6 +360,16 @@ begin
     end;
   res := bin[n] + ' ' + res;
   result := res;
+end;
+
+procedure TForm1.lblAVGClick(Sender: TObject);
+begin
+  edInp.Text := StringReplace(lblAVG.Caption, ',', '', [rfReplaceAll]);
+end;
+
+procedure TForm1.lblSUMClick(Sender: TObject);
+begin
+  edInp.Text := Trim(lblSUM.Caption);
 end;
 
 procedure TForm1.logComExecute(Sender: TObject);
@@ -320,11 +404,22 @@ end;
 
 procedure TForm1.lstDataDrawItem(Control: TWinControl; Index: Integer;
   Rect: TRect; State: TOwnerDrawState);
+var
+  txt: string;
+  pX: Integer;
 begin
-  lstData.Canvas.Brush.Color := clRed;
+  txt := FmtNum(xfrFloat(lstData.Items[Index]));
+  pX := lstData.Width-10;
+  SetTextAlign(lstData.Canvas.Handle, TA_RIGHT);
+  if lstData.ItemIndex=Index then
+    lstData.Canvas.Brush.Color := clCream
+  else
+    lstData.Canvas.Brush.Color := clWhite;
   lstData.Canvas.FillRect(Rect);
-  Memo1.Lines.Add('DrawItemEntered');
-  lstData.Canvas.TextOut(Rect.Left,Rect.Top,Format('%*.*f', [12,2,StrToFloat(lstData.Items[Index])]))
+  lstData.Canvas.Font.Color := clBlack;
+  lstData.Canvas.TextOut(pX,Rect.Top,txt);
+  SetTextAlign(lstData.Canvas.Handle, TA_LEFT);
+//  Memo1.Lines.Insert(0, IntToStr(Rect.Left));
 end;
 
 procedure TForm1.sqRootExecute(Sender: TObject);
