@@ -18,10 +18,11 @@ object Form1: TForm1
     Top = 0
     Width = 256
     Height = 481
-    ActivePage = tabBIN
+    ActivePage = tabLST
     Align = alClient
     Style = tsFlatButtons
     TabOrder = 0
+    OnChange = calcPagesChange
     object tabLST: TTabSheet
       Caption = 'LST'
       DesignSize = (
@@ -167,9 +168,9 @@ object Form1: TForm1
         end
         object Memo1: TMemo
           Left = 1
-          Top = 96
+          Top = 120
           Width = 246
-          Height = 106
+          Height = 82
           Align = alBottom
           Lines.Strings = (
             'Memo1')
@@ -335,186 +336,116 @@ object Form1: TForm1
           ParentFont = False
           TabOrder = 0
           Text = 'cbPara'
-          OnChange = cbParaChange
           Items.Strings = (
             '1'
             '5'
             '8'
             '10'
             '20'
-            '30')
+            '30'
+            'PI'
+            'e')
         end
       end
     end
     object tabBIN: TTabSheet
       Caption = 'BIN'
       ImageIndex = 1
-      DesignSize = (
-        248
-        448)
-      object LblHEX: TLabel
-        Left = 40
-        Top = 250
-        Width = 190
-        Height = 24
-        Alignment = taRightJustify
-        Anchors = [akTop, akRight]
-        AutoSize = False
-        Caption = 'LblHEX'
-        Color = clCream
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Meiryo UI'
-        Font.Style = []
-        ParentColor = False
-        ParentFont = False
-        Transparent = False
-        ExplicitLeft = 28
-      end
-      object LblBIN: TLabel
-        Left = 40
-        Top = 288
-        Width = 190
-        Height = 20
-        Alignment = taRightJustify
-        Anchors = [akTop, akRight]
-        AutoSize = False
-        Caption = 'LblBIN'
-        Color = clCream
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Meiryo UI'
-        Font.Style = []
-        ParentColor = False
-        ParentFont = False
-        Transparent = False
-        ExplicitLeft = 28
-      end
-      object Label4: TLabel
-        Left = 0
-        Top = 365
-        Width = 33
-        Height = 20
-        Caption = 'HEX'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Meiryo UI'
-        Font.Style = []
-        ParentFont = False
-      end
-      object Label5: TLabel
-        Left = 0
-        Top = 405
-        Width = 29
-        Height = 20
-        Caption = 'BIN'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Meiryo UI'
-        Font.Style = []
-        ParentFont = False
-      end
-      object Label3: TLabel
-        Left = 0
-        Top = 323
-        Width = 33
-        Height = 20
-        Caption = 'DEC'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Meiryo UI'
-        Font.Style = []
-        ParentFont = False
-      end
-      object edDec: TEdit
-        Left = 45
-        Top = 323
-        Width = 185
-        Height = 28
-        Alignment = taRightJustify
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Meiryo UI'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
-        Text = 'edDec'
-      end
-      object edHex: TEdit
-        Left = 45
-        Top = 362
-        Width = 185
-        Height = 28
-        Alignment = taRightJustify
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Meiryo UI'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 1
-        Text = 'edHex'
-      end
-      object edBin: TEdit
-        Left = 45
-        Top = 402
-        Width = 185
-        Height = 28
-        Alignment = taRightJustify
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Meiryo UI'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 2
-        Text = 'edBin'
-      end
-      object Panel3: TPanel
+      object pnlBIN: TPanel
         Left = 0
         Top = 28
         Width = 248
-        Height = 41
+        Height = 102
         Align = alTop
-        TabOrder = 3
-        ExplicitLeft = 24
-        ExplicitTop = 136
-        ExplicitWidth = 185
-        object sbtnBIN: TSpeedButton
-          Left = 8
-          Top = 4
-          Width = 30
-          Height = 30
-          AllowAllUp = True
-          GroupIndex = 2
-          Caption = 'BIN'
+        TabOrder = 0
+        object rgBase: TRadioGroup
+          Left = 1
+          Top = 1
+          Width = 80
+          Height = 100
+          Align = alLeft
+          Caption = 'base Num'
+          Items.Strings = (
+            'BIN'
+            'HEX'
+            'DEC')
+          TabOrder = 0
+          OnClick = rgBaseClick
         end
-        object sbtnHEX: TSpeedButton
-          Left = 42
-          Top = 4
-          Width = 30
-          Height = 30
-          AllowAllUp = True
-          GroupIndex = 2
-          Caption = 'HEX'
+        object Button9: TButton
+          Left = 144
+          Top = 71
+          Width = 40
+          Height = 25
+          Action = actShiftR
+          TabOrder = 1
         end
-        object SpeedButton2: TSpeedButton
-          Left = 76
-          Top = 4
-          Width = 30
-          Height = 30
-          AllowAllUp = True
-          GroupIndex = 2
-          Caption = 'DEC'
+        object Button8: TButton
+          Left = 96
+          Top = 71
+          Width = 40
+          Height = 25
+          Action = actShiftL
+          TabOrder = 2
+        end
+        object Button7: TButton
+          Left = 144
+          Top = 39
+          Width = 40
+          Height = 25
+          Action = actRev
+          TabOrder = 3
+        end
+        object Button6: TButton
+          Left = 96
+          Top = 39
+          Width = 40
+          Height = 25
+          Action = actNot
+          TabOrder = 4
+        end
+        object Button5: TButton
+          Left = 192
+          Top = 8
+          Width = 40
+          Height = 25
+          Action = actXOR
+          TabOrder = 5
+        end
+        object Button4: TButton
+          Left = 144
+          Top = 8
+          Width = 40
+          Height = 25
+          Action = actOR
+          TabOrder = 6
+        end
+        object Button3: TButton
+          Left = 96
+          Top = 8
+          Width = 40
+          Height = 25
+          Action = actAnd
+          TabOrder = 7
+        end
+        object Button10: TButton
+          Left = 192
+          Top = 39
+          Width = 40
+          Height = 25
+          Action = actSTA
+          TabOrder = 8
+        end
+        object Button11: TButton
+          Left = 192
+          Top = 71
+          Width = 40
+          Height = 25
+          Action = actXCG
+          TabOrder = 9
         end
       end
-      object Edit1: TEdit
+      object edBIN: TEdit
         Left = 0
         Top = 0
         Width = 248
@@ -527,14 +458,41 @@ object Form1: TForm1
         Font.Name = 'Meiryo UI'
         Font.Style = []
         ParentFont = False
-        TabOrder = 4
-        Text = 'Edit1'
+        TabOrder = 1
+        OnKeyPress = edBINKeyPress
+      end
+      object sgBIN: TStringGrid
+        Left = 0
+        Top = 130
+        Width = 248
+        Height = 103
+        TabStop = False
+        Align = alTop
+        ColCount = 10
+        DefaultColAlignment = taCenter
+        FixedColor = clYellow
+        FixedCols = 0
+        RowCount = 4
+        ScrollBars = ssVertical
+        TabOrder = 2
+        OnDrawCell = sgBINDrawCell
+      end
+      object Memo2: TMemo
+        Left = 0
+        Top = 233
+        Width = 248
+        Height = 215
+        Align = alClient
+        Lines.Strings = (
+          'Memo2')
+        ScrollBars = ssVertical
+        TabOrder = 3
       end
     end
   end
   object ActionManager1: TActionManager
-    Left = 48
-    Top = 408
+    Left = 84
+    Top = 424
     StyleName = 'Platform Default'
     object clearAll: TAction
       Category = 'fx'
@@ -610,6 +568,51 @@ object Form1: TForm1
       Category = 'fx'
       Caption = 'COS'
       OnExecute = actCosExecute
+    end
+    object actAnd: TAction
+      Category = 'binCalc'
+      Caption = 'AND'
+      OnExecute = actAndExecute
+    end
+    object actOR: TAction
+      Category = 'binCalc'
+      Caption = 'OR'
+      OnExecute = actORExecute
+    end
+    object actXOR: TAction
+      Category = 'binCalc'
+      Caption = 'XOR'
+      OnExecute = actXORExecute
+    end
+    object actNot: TAction
+      Category = 'binCalc'
+      Caption = 'NOT'
+      OnExecute = actNotExecute
+    end
+    object actRev: TAction
+      Category = 'binCalc'
+      Caption = 'REV'
+      OnExecute = actRevExecute
+    end
+    object actShiftL: TAction
+      Category = 'binCalc'
+      Caption = 'SHL'
+      OnExecute = actShiftLExecute
+    end
+    object actShiftR: TAction
+      Category = 'binCalc'
+      Caption = 'SHR'
+      OnExecute = actShiftRExecute
+    end
+    object actSTA: TAction
+      Category = 'binCalc'
+      Caption = 'STA'
+      OnExecute = actSTAExecute
+    end
+    object actXCG: TAction
+      Category = 'binCalc'
+      Caption = 'XCG'
+      OnExecute = actXCGExecute
     end
   end
 end
