@@ -3,3 +3,4 @@
 *.dproj.local
 __history/
 __recovery/
+*.rsm
