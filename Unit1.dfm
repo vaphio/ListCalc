@@ -13,94 +13,33 @@ object Form1: TForm1
   Font.Style = []
   OnCreate = FormCreate
   TextHeight = 15
+  object Splitter1: TSplitter
+    Left = 0
+    Top = 360
+    Width = 256
+    Height = 3
+    Cursor = crVSplit
+    Align = alTop
+    ExplicitTop = 357
+    ExplicitWidth = 42
+  end
   object calcPages: TPageControl
     Left = 0
     Top = 0
     Width = 256
-    Height = 481
+    Height = 360
     ActivePage = tabLST
-    Align = alClient
+    Align = alTop
     Style = tsFlatButtons
     TabOrder = 0
     OnChange = calcPagesChange
     object tabLST: TTabSheet
       Caption = 'LST'
-      DesignSize = (
-        248
-        448)
-      object lblSUM: TLabel
-        Left = 46
-        Top = 185
-        Width = 194
-        Height = 24
-        Alignment = taRightJustify
-        Anchors = [akTop, akRight]
-        AutoSize = False
-        Caption = 'lblSUM'
-        Color = clCream
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Meiryo UI'
-        Font.Style = []
-        ParentColor = False
-        ParentFont = False
-        Transparent = False
-        OnClick = lblSUMClick
-      end
-      object Label1: TLabel
-        Left = 3
-        Top = 185
-        Width = 35
-        Height = 20
-        Caption = 'SUM'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Meiryo UI'
-        Font.Style = []
-        ParentFont = False
-        OnClick = Label1Click
-      end
-      object Label2: TLabel
-        Left = 3
-        Top = 215
-        Width = 34
-        Height = 20
-        Caption = 'AVG'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Meiryo UI'
-        Font.Style = []
-        ParentFont = False
-        OnClick = Label2Click
-      end
-      object lblAVG: TLabel
-        Left = 46
-        Top = 215
-        Width = 194
-        Height = 24
-        Alignment = taRightJustify
-        Anchors = [akTop, akRight]
-        AutoSize = False
-        Caption = 'lblAVG'
-        Color = clCream
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Meiryo UI'
-        Font.Style = []
-        ParentColor = False
-        ParentFont = False
-        Transparent = False
-        OnClick = lblAVGClick
-      end
       object lstData: TListBox
         Left = 0
-        Top = 62
+        Top = 105
         Width = 248
-        Height = 121
+        Height = 124
         Style = lbOwnerDrawFixed
         Align = alTop
         Font.Charset = DEFAULT_CHARSET
@@ -114,30 +53,13 @@ object Form1: TForm1
         OnClick = lstDataClick
         OnDrawItem = lstDataDrawItem
       end
-      object edInp: TEdit
-        Left = 0
-        Top = 0
-        Width = 248
-        Height = 28
-        Align = alTop
-        Alignment = taRightJustify
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'Meiryo UI'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 1
-        Text = 'edInp'
-        OnKeyPress = edInpKeyPress
-      end
       object Panel1: TPanel
         Left = 0
-        Top = 245
+        Top = 231
         Width = 248
-        Height = 203
+        Height = 96
         Align = alBottom
-        TabOrder = 2
+        TabOrder = 1
         object BtnCA: TButton
           Left = 4
           Top = 4
@@ -166,16 +88,6 @@ object Form1: TForm1
             '5'
             '6')
         end
-        object Memo1: TMemo
-          Left = 1
-          Top = 120
-          Width = 246
-          Height = 82
-          Align = alBottom
-          Lines.Strings = (
-            'Memo1')
-          TabOrder = 2
-        end
         object btnC: TButton
           Left = 50
           Top = 4
@@ -184,7 +96,7 @@ object Form1: TForm1
           Action = clearInp
           ParentShowHint = False
           ShowHint = True
-          TabOrder = 3
+          TabOrder = 2
         end
         object btnSqrt: TButton
           Left = 142
@@ -194,7 +106,7 @@ object Form1: TForm1
           Action = sqRoot
           ParentShowHint = False
           ShowHint = True
-          TabOrder = 4
+          TabOrder = 3
         end
         object btnSq: TButton
           Left = 188
@@ -204,7 +116,7 @@ object Form1: TForm1
           Action = square
           ParentShowHint = False
           ShowHint = True
-          TabOrder = 5
+          TabOrder = 4
         end
         object btnLn: TButton
           Left = 50
@@ -212,7 +124,7 @@ object Form1: TForm1
           Width = 40
           Height = 25
           Action = logNat
-          TabOrder = 6
+          TabOrder = 5
         end
         object btnLog: TButton
           Left = 96
@@ -220,7 +132,7 @@ object Form1: TForm1
           Width = 40
           Height = 25
           Action = logCom
-          TabOrder = 7
+          TabOrder = 6
         end
         object btnExp: TButton
           Left = 142
@@ -228,7 +140,7 @@ object Form1: TForm1
           Width = 40
           Height = 25
           Action = actExp
-          TabOrder = 8
+          TabOrder = 7
         end
         object btnPercent: TButton
           Left = 4
@@ -236,7 +148,7 @@ object Form1: TForm1
           Width = 40
           Height = 25
           Action = actPercent
-          TabOrder = 9
+          TabOrder = 8
         end
         object btnPi: TButton
           Left = 188
@@ -244,7 +156,7 @@ object Form1: TForm1
           Width = 40
           Height = 25
           Action = actPi
-          TabOrder = 10
+          TabOrder = 9
         end
         object btnDel: TButton
           Left = 96
@@ -252,7 +164,7 @@ object Form1: TForm1
           Width = 40
           Height = 25
           Action = actDel
-          TabOrder = 11
+          TabOrder = 10
         end
         object Button1: TButton
           Left = 4
@@ -260,7 +172,7 @@ object Form1: TForm1
           Width = 40
           Height = 25
           Action = actSin
-          TabOrder = 12
+          TabOrder = 11
         end
         object Button2: TButton
           Left = 50
@@ -268,65 +180,59 @@ object Form1: TForm1
           Width = 40
           Height = 25
           Action = actCos
-          TabOrder = 13
+          TabOrder = 12
         end
       end
       object Panel2: TPanel
         Left = 0
-        Top = 28
+        Top = 0
         Width = 248
-        Height = 34
+        Height = 105
         Align = alTop
-        TabOrder = 3
-        object sbtnPerPlus: TSpeedButton
-          Left = 100
-          Top = 2
-          Width = 30
-          Height = 30
-          AllowAllUp = True
-          GroupIndex = 1
-          Caption = '%+'
-        end
-        object sbtnPerMinus: TSpeedButton
-          Left = 134
-          Top = 2
-          Width = 30
-          Height = 30
-          AllowAllUp = True
-          GroupIndex = 1
-          Caption = '%-'
-        end
-        object sbtnMul: TSpeedButton
+        TabOrder = 2
+        object lblCalc: TLabel
           Left = 4
-          Top = 2
-          Width = 30
-          Height = 30
-          AllowAllUp = True
-          GroupIndex = 1
-          Caption = '*'
+          Top = 10
+          Width = 50
+          Height = 20
+          Caption = 'lblCalc'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Meiryo UI'
+          Font.Style = []
+          ParentFont = False
         end
-        object sbtnDiv: TSpeedButton
-          Left = 36
-          Top = 2
-          Width = 30
-          Height = 30
-          AllowAllUp = True
-          GroupIndex = 1
-          Caption = '/'
+        object lblCalRes: TLabel
+          Left = 104
+          Top = 74
+          Width = 140
+          Height = 25
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'lblCalRes'
+          Color = clCream
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Meiryo UI'
+          Font.Style = []
+          ParentColor = False
+          ParentFont = False
+          Transparent = False
+          OnClick = lblCalResClick
         end
-        object sbtnPlus: TSpeedButton
-          Left = 68
-          Top = 2
-          Width = 30
-          Height = 30
-          AllowAllUp = True
-          GroupIndex = 1
-          Caption = '+'
+        object sbtnCp: TSpeedButton
+          Left = 72
+          Top = 72
+          Width = 23
+          Height = 22
+          Action = actCP
         end
         object cbPara: TComboBox
-          Left = 174
-          Top = 3
-          Width = 70
+          Left = 4
+          Top = 39
+          Width = 50
           Height = 28
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -337,14 +243,84 @@ object Form1: TForm1
           TabOrder = 0
           Text = 'cbPara'
           Items.Strings = (
+            '*'
+            '/'
+            '+'
+            '%+'
+            '%-'
+            'PI'
+            'e')
+        end
+        object edInp: TEdit
+          Left = 46
+          Top = 7
+          Width = 198
+          Height = 28
+          Alignment = taRightJustify
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'Meiryo UI'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 1
+          Text = 'edInp'
+          OnKeyPress = edInpKeyPress
+        end
+        object edPara: TEdit
+          Left = 123
+          Top = 41
+          Width = 121
+          Height = 25
+          Alignment = taRightJustify
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Meiryo UI'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 2
+          Text = 'edPara'
+        end
+        object cbCon: TComboBox
+          Left = 77
+          Top = 41
+          Width = 40
+          Height = 25
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Meiryo UI'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 3
+          Text = 'PI'
+          OnChange = cbConChange
+          Items.Strings = (
             '1'
             '5'
             '8'
             '10'
-            '20'
-            '30'
             'PI'
             'e')
+        end
+        object cbLCalc: TComboBox
+          Left = 4
+          Top = 73
+          Width = 62
+          Height = 23
+          TabOrder = 4
+          Text = 'cbLCalc'
+          OnChange = cbLCalcChange
+          Items.Strings = (
+            'SUM'
+            'AVG'
+            'CNT'
+            'MAX'
+            'MIN'
+            'MID'
+            'VAR'
+            'SD')
         end
       end
     end
@@ -477,18 +453,18 @@ object Form1: TForm1
         TabOrder = 2
         OnDrawCell = sgBINDrawCell
       end
-      object Memo2: TMemo
-        Left = 0
-        Top = 233
-        Width = 248
-        Height = 215
-        Align = alClient
-        Lines.Strings = (
-          'Memo2')
-        ScrollBars = ssVertical
-        TabOrder = 3
-      end
     end
+  end
+  object Memo1: TMemo
+    Left = 0
+    Top = 363
+    Width = 256
+    Height = 118
+    Align = alClient
+    Lines.Strings = (
+      'Memo1')
+    ScrollBars = ssVertical
+    TabOrder = 1
   end
   object ActionManager1: TActionManager
     Left = 84
@@ -613,6 +589,10 @@ object Form1: TForm1
       Category = 'binCalc'
       Caption = 'XCG'
       OnExecute = actXCGExecute
+    end
+    object actCP: TAction
+      Caption = 'CP'
+      OnExecute = actCPExecute
     end
   end
 end

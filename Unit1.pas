@@ -13,16 +13,12 @@ type
   TForm1 = class(TForm)
     lstData: TListBox;
     edInp: TEdit;
-    lblSUM: TLabel;
     BtnCA: TButton;
     ActionManager1: TActionManager;
     calcPages: TPageControl;
     tabLST: TTabSheet;
     tabBIN: TTabSheet;
     Panel1: TPanel;
-    Label1: TLabel;
-    Label2: TLabel;
-    lblAVG: TLabel;
     cbDig: TComboBox;
     Memo1: TMemo;
     btnC: TButton;
@@ -44,11 +40,6 @@ type
     actPerPlus: TAction;
     actPerMinus: TAction;
     Panel2: TPanel;
-    sbtnPerPlus: TSpeedButton;
-    sbtnPerMinus: TSpeedButton;
-    sbtnMul: TSpeedButton;
-    sbtnDiv: TSpeedButton;
-    sbtnPlus: TSpeedButton;
     btnPi: TButton;
     actPi: TAction;
     btnDel: TButton;
@@ -61,7 +52,6 @@ type
     edBIN: TEdit;
     sgBIN: TStringGrid;
     rgBase: TRadioGroup;
-    Memo2: TMemo;
     Button3: TButton;
     actAnd: TAction;
     actOR: TAction;
@@ -80,6 +70,14 @@ type
     actSTA: TAction;
     Button11: TButton;
     actXCG: TAction;
+    lblCalc: TLabel;
+    edPara: TEdit;
+    cbCon: TComboBox;
+    Splitter1: TSplitter;
+    cbLCalc: TComboBox;
+    lblCalRes: TLabel;
+    sbtnCp: TSpeedButton;
+    actCP: TAction;
     procedure FormCreate(Sender: TObject);
     procedure edInpKeyPress(Sender: TObject; var Key: Char);
     procedure lstDataDrawItem(Control: TWinControl; Index: Integer;
@@ -96,16 +94,20 @@ type
     procedure dspLST();
     function calcSGM(): double;
     function calcAvg(): double;
+    function calcMax(): double;
+    function calcMin(): double;
+    function calcMid(): double;
+    function calcDev(): double;
+    function calcSD(): double;
     function getInp(): double;
     function getPara(): double;
     function calcParPlus(src, para: double):double;
     function calcParMinus(src, para: double): double;
     function xfrFloat(snum: string): double;
+    function chkCalc(Key: Char): Integer;
     procedure setGrid(ARow: Integer; snum: string);
     procedure cbDigChange(Sender: TObject);
     procedure lstDataClick(Sender: TObject);
-    procedure Label1Click(Sender: TObject);
-    procedure Label2Click(Sender: TObject);
     procedure clearInpExecute(Sender: TObject);
     procedure clearAllExecute(Sender: TObject);
     procedure sqRootExecute(Sender: TObject);
@@ -114,8 +116,6 @@ type
     procedure logNatExecute(Sender: TObject);
     procedure actExpExecute(Sender: TObject);
     procedure actPercentExecute(Sender: TObject);
-    procedure lblSUMClick(Sender: TObject);
-    procedure lblAVGClick(Sender: TObject);
     procedure actPiExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
     procedure actSinExecute(Sender: TObject);
@@ -132,9 +132,18 @@ type
     procedure actRevExecute(Sender: TObject);
     procedure actShiftLExecute(Sender: TObject);
     procedure actShiftRExecute(Sender: TObject);
-    procedure setMemo(num: Integer; msg: string);
+    procedure setMemo(num: double; msg: string);
     procedure actSTAExecute(Sender: TObject);
     procedure actXCGExecute(Sender: TObject);
+    procedure cbConChange(Sender: TObject);
+    procedure lblCalResClick(Sender: TObject);
+    procedure cbLCalcChange(Sender: TObject);
+    procedure actCPExecute(Sender: TObject);
+    type
+      TFloatArray = array of double;
+      function getDataList(): TFloatArray;
+
+
   private
     { Private éŒ¾ }
   public
@@ -145,38 +154,101 @@ var
   Form1: TForm1;
   mode: boolean;    // true: insert mode, false: edit mode
   bmode, crow: Integer;
+  mem1, mem2: double;
 
 const
   bin: array[0..15] of string = ('0000','0001','0010','0011','0100','0101','0110','0111','1000','1001','1010','1011', '1100','1101','1110','1111');
   colSize = 10;
+  fn: array[0..4] of string = ('*','/','+','-','^');
+
 implementation
 
 {$R *.dfm}
 
+function TForm1.getDataList: TForm1.TFloatArray;
+var
+  i,n: Integer;
+  data: double;
+begin
+  n := lstData.Count;
+  SetLength(result, n);
+  for i := 0 to n-1 do
+    if TryStrToFloat(lstData.Items[i], data) then
+      result[i] := data
+    else result[i] := 0;
+end;
+
 function TForm1.calcAvg: Double;
 var
-  sum, avg: double;
-  num: Integer;
+  dlst: TFloatArray;
 begin
-  sum := calcSGM;
-  num := lstData.Items.Count;
-  if num>0 then
-    avg := sum / num
-  else
-    avg := 0;
-  result := avg;
+  if lstData.Count>0 then begin
+    dlst := getDataList;
+    result := Mean(dlst);
+  end else result := 0;
 end;
 
 function TForm1.calcSGM: double;
 var
   I: Integer;
-  sum: double;
+  sum, data: double;
 begin
   sum := 0.0;
   for I := 0 to lstData.Items.Count-1 do begin
-    sum := sum + StrToFloat(lstData.Items[I]);
+    if TryStrToFloat(lstData.Items[I], data) then
+      sum := sum + data;
   end;
   result := sum;
+end;
+
+function TForm1.calcMax: Double;
+var
+  dlst: TFloatArray;
+begin
+  if lstData.Count>0 then begin
+    dlst := getDataList;
+    result := MaxValue(dlst);
+  end else result := 0;
+end;
+
+function TForm1.calcMin: Double;
+var
+  dlst: TFloatArray;
+begin
+  if lstData.Count>0 then begin
+    dlst := getDataList;
+    result := MinValue(dlst);
+  end else result := 0;
+end;
+
+function TForm1.calcMid: Double;
+var
+  m: Integer;
+begin
+  if lstData.Count>0 then begin
+    m := lstData.Items.Count div 2;
+    result := StrToFloat(lstData.Items[m]);
+  end else result := 0;
+end;
+
+function TForm1.calcDev: Double;
+var
+  dlst: TFloatArray;
+begin
+  if lstData.Count>0 then begin
+    dlst := getDataList;
+    result := SumOfSquares(dlst);
+  end else result := 0;
+end;
+
+function TForm1.calcSD: Double;
+var
+  dlst: TFloatArray;
+begin
+  if lstData.Count>0 then begin
+    dlst := getDataList;
+    result := StdDev(dlst);
+  end else result := 0;
 end;
 
 function TForm1.calcParPlus(src: Double; para: Double): Double;
@@ -205,15 +277,40 @@ end;
 function TForm1.xfrFloat(snum: string): Double;
 var
   sbuf: string;
+  data: double;
 begin
   sbuf := StringReplace(snum, ',', '', [rfReplaceAll]);
-  result := StrToFloat(sbuf);
+  if TryStrToFloat(sbuf, data) then
+    result := data
+  else
+    result := 0;
+end;
+
+procedure TForm1.cbConChange(Sender: TObject);
+var
+  spara: string;
+  para: double;
+begin
+  spara := cbCon.Text;
+  if TryStrToFloat(spara, para) then
+    setMemo(para, ' *')
+  else begin
+    if spara = 'PI' then para := Pi
+    else if spara = 'e' then para := exp(1)
+    else para := StrToFloat(spara);
+  end;
+  edPara.Text := FloatToStr(para);
 end;
 
 procedure TForm1.cbDigChange(Sender: TObject);
 begin
   dspLST;
   ActiveControl := edInp;
+end;
+
+procedure TForm1.cbLCalcChange(Sender: TObject);
+begin
+  dspLst;
 end;
 
 procedure TForm1.clearAllExecute(Sender: TObject);
@@ -232,12 +329,20 @@ end;
 
 procedure TForm1.dspLST;
 var
-  sum, avg: Double;
+  calRes: Double;
 begin
-  sum := calcSGM;
-  avg := calcAvg;
-  lblSUM.Caption := FmtNum(sum);
-  lblAVG.Caption := FmtNum(avg);
+  calRes := 0;
+  case cbLCalc.ItemIndex of
+    0: calRes := calcSGM;   //sum
+    1: calRes := calcAVG;   //average
+    2: calRes := lstData.Count; //count
+    3: calRes := calcMax;         //max
+    4: calRes := calcMin;         //min
+    5: calRes := calcMid;         //mid
+    6: calRes := calcDev;         //var
+    7: calRes := calcSD;         //sd
+  end;
+  lblCalRes.Caption := FmtNum(calRes);
 end;
 
 procedure TForm1.edBINKeyPress(Sender: TObject; var Key: Char);
@@ -294,27 +399,46 @@ end;
 
 procedure TForm1.edInpKeyPress(Sender: TObject; var Key: Char);
 var
-  knum: Integer;
+  knum, cidx: Integer;
   cbuf, para, res: double;
-  srst: string;
+  srst, p, msg: string;
 begin
   if calcPages.ActivePageIndex=1 then exit;
 
   knum := Ord(Key);
-//  Memo1.Lines.Add(IntToStr(knum));
   res := 0.0;
+  cidx := chkCalc(Key);
   if knum=13 then begin    //enter
+    cidx := IndexStr(lblCalc.Caption, fn);
     cbuf := getInp;
+    if cidx > -1 then begin
+      msg := FmtNum(mem1) + fn[cidx] + FmtNum(cbuf) + ' =';
+      case cidx of
+        0: cbuf := mem1 * cbuf;
+        1: cbuf := mem1 / cbuf;
+        2: cbuf := mem1 + cbuf;
+        3: cbuf := mem1 - cbuf;
+        4: cbuf := Power(mem1, cbuf);
+      end;
+      msg := msg + FmtNum(cbuf);
+      Memo1.Lines.Insert(0, msg);
+    end else
+      setMemo(cbuf, '=');
+
+    edInp.Text := FloatToStr(cbuf);
+    mem1 := 0;
+    lblCalc.Caption := '';
     para := getPara;
-    if sbtnMul.Down then
+    p := cbPara.Text;
+    if p = '*' then
       res := cbuf * para
-    else if sbtnDiv.Down and (para<>0) then
+    else if (p = '/') and (para<>0) then
       res := cbuf / para
-    else if sbtnPlus.Down then
+    else if p = '+' then
       res := cbuf + para
-    else if sbtnPerPlus.Down then
+    else if p = '%+' then
       res := cbuf * (1 + para/100)
-    else if sbtnPerMinus.Down then
+    else if p = '%-' then
       res := cbuf * (1 - para/100);
     srst := FloatToStr(res);
     edInp.Text := srst;
@@ -327,7 +451,19 @@ begin
     dspLST;
     edInp.Clear;
     mode := true;
+  end
+  else if cidx > -1 then begin
+    mem1 := getInp;
+    edInp.Text := '';
+    Key := Char(0);
   end;
+end;
+
+function TForm1.chkCalc(Key: Char): Integer;
+begin
+  result := IndexStr(Key, fn);
+  if result > -1 then
+    lblCalc.Caption := fn[result];
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -340,10 +476,15 @@ begin
   // LIST CALC Page
   lstData.Items.Clear;
   edInp.Clear;
+  edPara.Text := '1';
+  cbCon.ItemIndex := 0;
+  cbPara.ItemIndex := 0;
+  cbLCalc.ItemIndex := 0;
+  lblCalc.Caption := '';
+  lblCalRes.Caption := '';
   mode := true;
   dspLST;
   ActiveControl := edInp;
-  sbtnMul.Down := True;
   Memo1.Lines.Clear;
   // Binary Calc page
   calcPages.TabIndex := 1;
@@ -360,8 +501,8 @@ begin
     c := I;
     sgBIN.Cells[c, 0] := IntToStr(8-I);
   end;
-  Memo2.Lines.Clear;
   calcPages.TabIndex := 0;
+  ActiveControl := edInp;
 end;
 
 function TForm1.FmtNum(num: double): string;
@@ -369,7 +510,7 @@ var
   ndig: Integer;
 begin
   ndig := StrToInt(cbDig.Text);
-  result := Format('%24.*n',[ndig, num]);
+  result := Trim(Format('%24.*n',[ndig, num]));
 end;
 
 function TForm1.HexNum(snum: string): string;
@@ -403,13 +544,23 @@ begin
   setGrid(ARow, sbin);
 end;
 
-procedure TForm1.setMemo(num: Integer; msg: string);
+procedure TForm1.setMemo(num: double; msg: string);
 var
-  sbin, shex: string;
+  sbin, shex, snum: string;
+  inum: Integer;
 begin
-  sbin := NumToSBIN(num);
-  shex := IntToHex(num, 2);
-  Memo2.Lines.Insert(0, shex+':'+sbin+'--'+msg);
+  case calcPages.ActivePageIndex of
+  0: begin
+    snum := FmtNum(num);
+    Memo1.Lines.Insert(0, snum + ' ' + msg);
+    end;
+  1: begin
+    inum := trunc(num);
+    sbin := NumToSBIN(inum);
+    shex := IntToHex(inum, 2);
+    Memo1.Lines.Insert(0, shex+':'+sbin+'--'+msg);
+    end;
+  end;
 end;
 
 function TForm1.getData(snum: string): Integer;
@@ -449,24 +600,6 @@ begin
 //  sgBIN.Canvas.TextOut(Rect.Left, Rect.Top, txt);
 end;
 
-procedure TForm1.Label1Click(Sender: TObject);
-var
-  s: string;
-begin
-  s := Trim(lblSUM.Caption);
-  Clipboard.AsText := s;
-  Memo1.Lines.Add('SUM data was copied.:'+s);
-end;
-
-procedure TForm1.Label2Click(Sender: TObject);
-var
-  s: string;
-begin
-  s := Trim(lblAVG.Caption);
-  Clipboard.AsText := s;
-  Memo1.Lines.Add('AVG data was copied.:'+s);
-end;
-
 procedure TForm1.actAndExecute(Sender: TObject);
 var
   a,b,res: Integer;
@@ -486,6 +619,11 @@ begin
   res := Cos(buf*pi/180);
   edInp.Text := FloatToStr(res);
   ActiveControl := edInp;
+end;
+
+procedure TForm1.actCPExecute(Sender: TObject);
+begin
+  Clipboard.AsText := lbLCalRes.Caption;
 end;
 
 procedure TForm1.actDelExecute(Sender: TObject);
@@ -636,13 +774,8 @@ begin
 end;
 
 function TForm1.getPara: Double;
-var
-  spara: string;
 begin
-  spara := cbPara.Text;
-  if spara = 'PI' then result := Pi
-  else if spara = 'e' then result := exp(1)
-  else result := xfrFloat(cbPara.Text);
+  result := StrToFloat(edPara.Text);
 end;
 
 function TForm1.NumToSBin(num: Integer): string;
@@ -660,14 +793,9 @@ begin
   ActiveControl := edBIN;
 end;
 
-procedure TForm1.lblAVGClick(Sender: TObject);
+procedure TForm1.lblCalResClick(Sender: TObject);
 begin
-  edInp.Text := StringReplace(lblAVG.Caption, ',', '', [rfReplaceAll]);
-end;
-
-procedure TForm1.lblSUMClick(Sender: TObject);
-begin
-  edInp.Text := FloatToStr(xfrFloat(lblSUM.Caption));
+  edInp.Text := FloatToStr(xfrFloat(lblCalRes.Caption));
 end;
 
 procedure TForm1.logComExecute(Sender: TObject);
