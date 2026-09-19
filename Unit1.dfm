@@ -252,9 +252,9 @@ object Form1: TForm1
             'e')
         end
         object edInp: TEdit
-          Left = 46
+          Left = 77
           Top = 7
-          Width = 198
+          Width = 167
           Height = 28
           Alignment = taRightJustify
           Font.Charset = DEFAULT_CHARSET
@@ -321,6 +321,15 @@ object Form1: TForm1
             'MID'
             'VAR'
             'SD')
+        end
+        object enBtn: TButton
+          Left = 42
+          Top = 10
+          Width = 29
+          Height = 25
+          Caption = #10004
+          TabOrder = 5
+          OnClick = enBtnClick
         end
       end
     end

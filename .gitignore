@@ -4,3 +4,5 @@
 __history/
 __recovery/
 *.rsm
+resource/
+*.ico

@@ -78,6 +78,7 @@ type
     lblCalRes: TLabel;
     sbtnCp: TSpeedButton;
     actCP: TAction;
+    enBtn: TButton;
     procedure FormCreate(Sender: TObject);
     procedure edInpKeyPress(Sender: TObject; var Key: Char);
     procedure lstDataDrawItem(Control: TWinControl; Index: Integer;
@@ -92,6 +93,7 @@ type
     function chkHex(knum: Integer): Char;
     function sHexToNum(snum: string): Integer;
     procedure dspLST();
+    function calcMath(a, b: double; fnIdx: Integer):double;
     function calcSGM(): double;
     function calcAvg(): double;
     function calcMax(): double;
@@ -104,7 +106,7 @@ type
     function calcParPlus(src, para: double):double;
     function calcParMinus(src, para: double): double;
     function xfrFloat(snum: string): double;
-    function chkCalc(Key: Char): Integer;
+    function chkCalc(Key: string): Integer;
     procedure setGrid(ARow: Integer; snum: string);
     procedure cbDigChange(Sender: TObject);
     procedure lstDataClick(Sender: TObject);
@@ -139,6 +141,7 @@ type
     procedure lblCalResClick(Sender: TObject);
     procedure cbLCalcChange(Sender: TObject);
     procedure actCPExecute(Sender: TObject);
+    procedure enBtnClick(Sender: TObject);
     type
       TFloatArray = array of double;
       function getDataList(): TFloatArray;
@@ -159,7 +162,7 @@ var
 const
   bin: array[0..15] of string = ('0000','0001','0010','0011','0100','0101','0110','0111','1000','1001','1010','1011', '1100','1101','1110','1111');
   colSize = 10;
-  fn: array[0..4] of string = ('*','/','+','-','^');
+  fn: array[0..6] of string = ('*','/','+','-','^','%+','%-');
 
 implementation
 
@@ -249,6 +252,25 @@ begin
     dlst := getDataList;
     result := StdDev(dlst);
   end else result := 0;
+end;
+
+function TForm1.calcMath(a: Double; b: Double; fnIdx: Integer): Double;
+begin
+  if fnIdx < 0 then
+    result := 0
+  else begin
+    case fnIdx of
+      0: result := a * b;
+      1: if b<>0 then result := a / b else result := -9.999;
+      2: result := a + b;
+      3: result := a - b;
+      4: result := Power(a,b);
+      5: result := a * (1 + b/100);
+      6: result := a * (1 - b/100);
+    else
+      result := 0;
+    end;
+  end;
 end;
 
 function TForm1.calcParPlus(src: Double; para: Double): Double;
@@ -348,7 +370,7 @@ end;
 procedure TForm1.edBINKeyPress(Sender: TObject; var Key: Char);
 var
   knum, bint: Integer;
-  sbin, shex: string;
+  sbin, shex, sdec: string;
 begin
   if calcPages.ActivePageIndex=0 then exit;
 
@@ -366,8 +388,10 @@ begin
 //    Memo2.Lines.Add(IntToStr(crow));
     sbin := NumToSBIN(bint);
     shex := IntToHex(bint, 2);
+    sdec := IntToStr(bint);
     setGrid(crow+1, sbin);
-    sgBIN.Cells[0,crow+1] := IntToStr(bint);
+    sgBIN.Cells[0,crow+1] := sdec;
+    sgBIN.Cells[9,crow+1] := sdec;
     setMemo(bint, 'set '+IntToStr(crow));
 //    lstBIN.Items.Insert(0, shex+':'+sbin);
     edBIN.Clear;
@@ -399,47 +423,34 @@ end;
 
 procedure TForm1.edInpKeyPress(Sender: TObject; var Key: Char);
 var
-  knum, cidx: Integer;
+  cidx: Integer;
   cbuf, para, res: double;
-  srst, p, msg: string;
+  srst, p, msg, sfnc: string;
 begin
-  if calcPages.ActivePageIndex=1 then exit;
-
-  knum := Ord(Key);
-  res := 0.0;
   cidx := chkCalc(Key);
-  if knum=13 then begin    //enter
-    cidx := IndexStr(lblCalc.Caption, fn);
+  if cidx > -1 then
+    lblCalc.Caption := Key;
+  if Key=Char(13) then begin    //enter
     cbuf := getInp;
-    if cidx > -1 then begin
-      msg := FmtNum(mem1) + fn[cidx] + FmtNum(cbuf) + ' =';
-      case cidx of
-        0: cbuf := mem1 * cbuf;
-        1: cbuf := mem1 / cbuf;
-        2: cbuf := mem1 + cbuf;
-        3: cbuf := mem1 - cbuf;
-        4: cbuf := Power(mem1, cbuf);
-      end;
-      msg := msg + FmtNum(cbuf);
-      Memo1.Lines.Insert(0, msg);
-    end else
-      setMemo(cbuf, '=');
-
-    edInp.Text := FloatToStr(cbuf);
+    sfnc := lblCalc.Caption;
+    cidx := chkCalc(sfnc);
+    if sfnc <> '' then begin
+      res := calcMath(mem1, cbuf, cidx);
+      msg := FmtNum(mem1) + sfnc + FmtNum(cbuf) + ' =' + FmtNum(res);
+    end else begin
+      res := cbuf;
+      msg := FmtNum(cbuf) + ' =' + FmtNum(res);
+    end;
+    edInp.Text := FloatToStr(res);
+    Memo1.Lines.Insert(0, msg);
     mem1 := 0;
     lblCalc.Caption := '';
+
     para := getPara;
     p := cbPara.Text;
-    if p = '*' then
-      res := cbuf * para
-    else if (p = '/') and (para<>0) then
-      res := cbuf / para
-    else if p = '+' then
-      res := cbuf + para
-    else if p = '%+' then
-      res := cbuf * (1 + para/100)
-    else if p = '%-' then
-      res := cbuf * (1 - para/100);
+    cbuf := getInp;
+    cidx := chkCalc(p);
+    res := calcMath(cbuf, para, cidx);
     srst := FloatToStr(res);
     edInp.Text := srst;
     if mode then begin
@@ -449,7 +460,7 @@ begin
     else
       lstData.Items[lstData.ItemIndex] := srst;
     dspLST;
-    edInp.Clear;
+    edInp.SelectAll;
     mode := true;
   end
   else if cidx > -1 then begin
@@ -459,11 +470,15 @@ begin
   end;
 end;
 
-function TForm1.chkCalc(Key: Char): Integer;
+procedure TForm1.enBtnClick(Sender: TObject);
+begin
+  ActiveControl := edInp;
+  edInp.SelectAll;
+end;
+
+function TForm1.chkCalc(Key: string): Integer;
 begin
   result := IndexStr(Key, fn);
-  if result > -1 then
-    lblCalc.Caption := fn[result];
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -492,10 +507,10 @@ begin
   rgBase.ItemIndex := 0;
   bmode := 0;
   crow := 0;
-  sgBin.ColWidths[0] := 40;
+  sgBin.ColWidths[0] := 35;
   sgBin.Cells[0, 0] := 'HEX';
-  sgBin.ColWidths[8] := 40;
-  sgBin.Cells[8, 0] := 'CMD';
+  sgBin.ColWidths[9] := 40;
+  sgBin.Cells[9, 0] := 'DEC';
   for I := 1 to colSize -2 do begin
     sgBIN.ColWidths[I] := 20;
     c := I;
@@ -537,9 +552,11 @@ end;
 
 procedure TForm1.setCell(ARow: Integer; data: Integer);
 var
-  sbin: string;
+  sbin, sdec: string;
 begin
-  sgBIN.Cells[0, ARow] := IntToStr(data);
+  sdec := IntToStr(data);
+  sgBIN.Cells[0, ARow] := sdec;
+  sgBIN.Cells[9, ARow] := sdec;
   sbin := NumToSBIN(data);
   setGrid(ARow, sbin);
 end;
@@ -603,12 +620,14 @@ end;
 procedure TForm1.actAndExecute(Sender: TObject);
 var
   a,b,res: Integer;
+  sfnc: string;
 begin
+  sfnc := 'AND';
   a := getCell(1);
   b := getCell(2);
   res := a and b;
   setCell(3, res);
-  setMemo(res, 'AND');
+  setMemo(res, sfnc);
 end;
 
 procedure TForm1.actCosExecute(Sender: TObject);
