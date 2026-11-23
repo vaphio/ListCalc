@@ -107,7 +107,7 @@ type
     function calcParMinus(src, para: double): double;
     function xfrFloat(snum: string): double;
     function chkCalc(Key: string): Integer;
-    procedure setGrid(ARow: Integer; snum: string);
+    procedure setGrid(ARow: Integer; num: Integer);
     procedure cbDigChange(Sender: TObject);
     procedure lstDataClick(Sender: TObject);
     procedure clearInpExecute(Sender: TObject);
@@ -370,12 +370,10 @@ end;
 procedure TForm1.edBINKeyPress(Sender: TObject; var Key: Char);
 var
   knum, bint: Integer;
-  sbin, shex, sdec: string;
 begin
   if calcPages.ActivePageIndex=0 then exit;
 
   knum := Ord(Key);
-//  lblBIN.Caption := IntToStr(knum);
   case rgBase.ItemIndex of
     0: if knum>49 then Key := char(0);
     1: Key := chkHex(knum);
@@ -383,19 +381,14 @@ begin
   end;
 
   if knum=13 then begin
-//    sgBIN.RowCount := sgBIN.RowCount + 1;
+    if sgBIN.Cells[9,1] <> '' then begin
+      bint := getCell(1);
+      setGrid(2, bint);
+    end;
     bint := getData(edBIN.Text);
-//    Memo2.Lines.Add(IntToStr(crow));
-    sbin := NumToSBIN(bint);
-    shex := IntToHex(bint, 2);
-    sdec := IntToStr(bint);
-    setGrid(crow+1, sbin);
-    sgBIN.Cells[0,crow+1] := sdec;
-    sgBIN.Cells[9,crow+1] := sdec;
+    setGrid(1, bint);
     setMemo(bint, 'set '+IntToStr(crow));
-//    lstBIN.Items.Insert(0, shex+':'+sbin);
     edBIN.Clear;
-    crow := (crow + 1) mod 2;
   end;
 end;
 
@@ -554,11 +547,7 @@ procedure TForm1.setCell(ARow: Integer; data: Integer);
 var
   sbin, sdec: string;
 begin
-  sdec := IntToStr(data);
-  sgBIN.Cells[0, ARow] := sdec;
-  sgBIN.Cells[9, ARow] := sdec;
-  sbin := NumToSBIN(data);
-  setGrid(ARow, sbin);
+  setGrid(ARow, data);
 end;
 
 procedure TForm1.setMemo(num: double; msg: string);
@@ -590,13 +579,18 @@ begin
   end;
 end;
 
-procedure TForm1.setGrid(ARow: Integer; snum: string);
+procedure TForm1.setGrid(ARow: Integer; num: Integer);
 var
   i: Integer;
+  sbin, snum: string;
 begin
-  for i:=1 to Length(snum) do begin
-    sgBIN.Cells[i,ARow] := snum[i];
+  snum := IntToStr(num);
+  sbin := NumToSBIN(num);
+  for i:=1 to 8 do begin
+    sgBIN.Cells[i,ARow] := sbin[i];
   end;
+  sgBIN.Cells[0, ARow] := snum;
+  sgBIN.Cells[9, ARow] := snum;
 end;
 
 procedure TForm1.sgBINDrawCell(Sender: TObject; ACol, ARow: LongInt;

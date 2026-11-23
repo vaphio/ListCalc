@@ -28,7 +28,7 @@ object Form1: TForm1
     Top = 0
     Width = 256
     Height = 360
-    ActivePage = tabLST
+    ActivePage = tabBIN
     Align = alTop
     Style = tsFlatButtons
     TabOrder = 0
