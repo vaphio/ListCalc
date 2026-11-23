@@ -83,6 +83,10 @@ type
     rbMode1: TRadioButton;
     rbMode2: TRadioButton;
     Label2: TLabel;
+    actPw2: TAction;
+    Button12: TButton;
+    btnRst: TButton;
+    actRst: TAction;
     procedure FormCreate(Sender: TObject);
     procedure edInpKeyPress(Sender: TObject; var Key: Char);
     procedure lstDataDrawItem(Control: TWinControl; Index: Integer;
@@ -148,6 +152,8 @@ type
     procedure rbMode1Click(Sender: TObject);
     procedure rbMode2Click(Sender: TObject);
     procedure setMode(md: boolean);
+    procedure actPw2Execute(Sender: TObject);
+    procedure actRstExecute(Sender: TObject);
     type
       TFloatArray = array of double;
       function getDataList(): TFloatArray;
@@ -705,6 +711,16 @@ begin
   edInp.Text := FloatToStr(pi);
 end;
 
+procedure TForm1.actPw2Execute(Sender: TObject);
+var
+  buf, res: double;
+begin
+  buf := StrToFloat(edInp.Text);
+  res := Power(2, buf);
+  edInp.Text := FloatToStr(res);
+  ActiveControl := edInp;
+end;
+
 procedure TForm1.actRevExecute(Sender: TObject);
 var
   a, i, res: Integer;
@@ -718,6 +734,13 @@ begin
   res := sBINtoNum(sres);
   setGrid(3, res);
   setMemo(res, 'REV');
+end;
+
+procedure TForm1.actRstExecute(Sender: TObject);
+begin
+  cbPara.ItemIndex := 0;
+  cbCon.ItemIndex := 0;
+  edPara.Text := '1';
 end;
 
 procedure TForm1.actShiftLExecute(Sender: TObject);

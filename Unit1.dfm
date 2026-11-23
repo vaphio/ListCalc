@@ -37,9 +37,9 @@ object Form1: TForm1
       Caption = 'LST'
       object lstData: TListBox
         Left = 0
-        Top = 124
+        Top = 137
         Width = 248
-        Height = 108
+        Height = 95
         Style = lbOwnerDrawFixed
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
@@ -191,15 +191,22 @@ object Form1: TForm1
           Action = actCos
           TabOrder = 12
         end
+        object Button12: TButton
+          Left = 96
+          Top = 66
+          Width = 40
+          Height = 25
+          Action = actPw2
+          TabOrder = 13
+        end
       end
       object Panel2: TPanel
         Left = 0
         Top = 0
         Width = 248
-        Height = 124
+        Height = 137
         Align = alTop
         TabOrder = 2
-        ExplicitTop = 3
         object lblCalc: TLabel
           Left = 4
           Top = 10
@@ -370,6 +377,14 @@ object Form1: TForm1
           Caption = 'Edit'
           TabOrder = 7
           OnClick = rbMode2Click
+        end
+        object btnRst: TButton
+          Left = 4
+          Top = 106
+          Width = 50
+          Height = 25
+          Action = actRst
+          TabOrder = 8
         end
       end
     end
@@ -642,6 +657,16 @@ object Form1: TForm1
     object actCP: TAction
       Caption = 'CP'
       OnExecute = actCPExecute
+    end
+    object actPw2: TAction
+      Category = 'fx'
+      Caption = '2^'
+      OnExecute = actPw2Execute
+    end
+    object actRst: TAction
+      Category = 'paraCalc'
+      Caption = 'reset'
+      OnExecute = actRstExecute
     end
   end
 end
