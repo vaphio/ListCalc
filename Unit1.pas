@@ -79,6 +79,10 @@ type
     sbtnCp: TSpeedButton;
     actCP: TAction;
     enBtn: TButton;
+    Label1: TLabel;
+    rbMode1: TRadioButton;
+    rbMode2: TRadioButton;
+    Label2: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure edInpKeyPress(Sender: TObject; var Key: Char);
     procedure lstDataDrawItem(Control: TWinControl; Index: Integer;
@@ -88,7 +92,6 @@ type
     function NumToSBin(num: Integer): string;
     function sBinToNum(snum: string): Integer;
     function getCell(ARow: Integer): Integer;
-    procedure setCell(ARow, data: Integer);
     function getData(snum: string): Integer;
     function chkHex(knum: Integer): Char;
     function sHexToNum(snum: string): Integer;
@@ -142,6 +145,9 @@ type
     procedure cbLCalcChange(Sender: TObject);
     procedure actCPExecute(Sender: TObject);
     procedure enBtnClick(Sender: TObject);
+    procedure rbMode1Click(Sender: TObject);
+    procedure rbMode2Click(Sender: TObject);
+    procedure setMode(md: boolean);
     type
       TFloatArray = array of double;
       function getDataList(): TFloatArray;
@@ -163,6 +169,7 @@ const
   bin: array[0..15] of string = ('0000','0001','0010','0011','0100','0101','0110','0111','1000','1001','1010','1011', '1100','1101','1110','1111');
   colSize = 10;
   fn: array[0..6] of string = ('*','/','+','-','^','%+','%-');
+  version='1.1';
 
 implementation
 
@@ -478,6 +485,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 var
   I,c: Integer;
 begin
+  Form1.Caption := 'List Calc (ver.' + version + ')';
   self.Left := Monitor.Width - self.Width - 20;
   self.Top := Monitor.Height - self.Height - 60;
   calcPages.TabIndex := 0;
@@ -541,13 +549,6 @@ end;
 function TForm1.getCell(ARow: Integer): Integer;
 begin
   result := StrToInt(sgBIN.Cells[0, ARow]);
-end;
-
-procedure TForm1.setCell(ARow: Integer; data: Integer);
-var
-  sbin, sdec: string;
-begin
-  setGrid(ARow, data);
 end;
 
 procedure TForm1.setMemo(num: double; msg: string);
@@ -620,7 +621,7 @@ begin
   a := getCell(1);
   b := getCell(2);
   res := a and b;
-  setCell(3, res);
+  setGrid(3, res);
   setMemo(res, sfnc);
 end;
 
@@ -672,7 +673,7 @@ begin
     else sres := sres + '0';
   end;
   res := sBINtoNum(sres);
-  setCell(3,res);
+  setGrid(3,res);
   setMemo(res, 'NOT');
 end;
 
@@ -685,7 +686,7 @@ begin
   b := getCell(2);
   cmd := 'OR';
   res := a or b;
-  setCell(3, res);
+  setGrid(3, res);
   setMemo(res, cmd);
 end;
 
@@ -715,7 +716,7 @@ begin
   for i := 1 to Length(sbin) do
     sres := sbin[i] + sres;
   res := sBINtoNum(sres);
-  setCell(3, res);
+  setGrid(3, res);
   setMemo(res, 'REV');
 end;
 
@@ -728,7 +729,7 @@ begin
   sbin := NumToSBIN(a);
   sres := RightStr(sbin,7)+'0';
   res := sBINtoNum(sres);
-  setCell(3,res);
+  setGrid(3,res);
   setMemo(res, 'SHL');
 end;
 
@@ -741,7 +742,7 @@ begin
   sbin := NumToSBIN(a);
   sres := '0'+LeftStr(sbin,7);
   res := sBINtoNum(sres);
-  setCell(3, res);
+  setGrid(3, res);
   setMemo(res, 'SHR');
 end;
 
@@ -760,7 +761,7 @@ var
   num: Integer;
 begin
   num := getCell(3);
-  setCell(1, num);
+  setGrid(1, num);
   setMemo(num, 'STR');
 end;
 
@@ -770,8 +771,8 @@ var
 begin
   a := getCell(1);
   b := getCell(2);
-  setCell(1,b);
-  setCell(2,a);
+  setGrid(1,b);
+  setGrid(2,a);
   setMemo(b, 'XCG');
 end;
 
@@ -782,7 +783,7 @@ begin
   a := getCell(1);
   b := getCell(2);
   res := a xor b;
-  setCell(3, res);
+  setGrid(3, res);
   setMemo(res, 'XOR');
 end;
 
@@ -799,6 +800,24 @@ begin
   num := num div 16;
   res := bin[num] + res;
   result := res;
+end;
+
+procedure TForm1.rbMode1Click(Sender: TObject);
+begin
+  mode := True;
+  ActiveControl := edInp;
+end;
+
+procedure TForm1.rbMode2Click(Sender: TObject);
+begin
+  mode := False;
+  ActiveControl := edInp;
+end;
+
+procedure TForm1.setMode(md: Boolean);
+begin
+  if md then rbMode1.Checked := true
+  else rbMode2.Checked := true;
 end;
 
 procedure TForm1.rgBaseClick(Sender: TObject);
@@ -838,6 +857,7 @@ begin
   I := lstData.ItemIndex;
   edInp.Text := lstData.Items[I];
   mode := false;
+  setMode(mode);
   ActiveControl := edInp;
 end;
 

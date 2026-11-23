@@ -28,7 +28,7 @@ object Form1: TForm1
     Top = 0
     Width = 256
     Height = 360
-    ActivePage = tabBIN
+    ActivePage = tabLST
     Align = alTop
     Style = tsFlatButtons
     TabOrder = 0
@@ -37,11 +37,11 @@ object Form1: TForm1
       Caption = 'LST'
       object lstData: TListBox
         Left = 0
-        Top = 105
+        Top = 124
         Width = 248
-        Height = 124
+        Height = 108
         Style = lbOwnerDrawFixed
-        Align = alTop
+        Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -16
@@ -52,14 +52,23 @@ object Form1: TForm1
         TabOrder = 0
         OnClick = lstDataClick
         OnDrawItem = lstDataDrawItem
+        ExplicitTop = 105
+        ExplicitHeight = 124
       end
       object Panel1: TPanel
         Left = 0
-        Top = 231
+        Top = 232
         Width = 248
-        Height = 96
+        Height = 95
         Align = alBottom
         TabOrder = 1
+        object Label1: TLabel
+          Left = 144
+          Top = 72
+          Width = 51
+          Height = 15
+          Caption = 'FixPoint:'
+        end
         object BtnCA: TButton
           Left = 4
           Top = 4
@@ -187,9 +196,10 @@ object Form1: TForm1
         Left = 0
         Top = 0
         Width = 248
-        Height = 105
+        Height = 124
         Align = alTop
         TabOrder = 2
+        ExplicitTop = 3
         object lblCalc: TLabel
           Left = 4
           Top = 10
@@ -227,7 +237,17 @@ object Form1: TForm1
           Top = 72
           Width = 23
           Height = 22
+          Hint = 'copy result'
           Action = actCP
+          ParentShowHint = False
+          ShowHint = True
+        end
+        object Label2: TLabel
+          Left = 103
+          Top = 105
+          Width = 38
+          Height = 15
+          Caption = 'mode:'
         end
         object cbPara: TComboBox
           Left = 4
@@ -330,6 +350,26 @@ object Form1: TForm1
           Caption = #10004
           TabOrder = 5
           OnClick = enBtnClick
+        end
+        object rbMode1: TRadioButton
+          Left = 147
+          Top = 105
+          Width = 48
+          Height = 17
+          Caption = 'Ins'
+          Checked = True
+          TabOrder = 6
+          TabStop = True
+          OnClick = rbMode1Click
+        end
+        object rbMode2: TRadioButton
+          Left = 195
+          Top = 105
+          Width = 49
+          Height = 17
+          Caption = 'Edit'
+          TabOrder = 7
+          OnClick = rbMode2Click
         end
       end
     end
